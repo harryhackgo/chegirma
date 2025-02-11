@@ -29,6 +29,16 @@ import { SocialLink } from "./social_link/models/social_link.entity";
 import { StoreModule } from "./store/store.module";
 import { StoreSocialLink } from "./store_social_link/models/store_social_link.model";
 import { Bot } from "./bot/models/bot.model";
+import { DiscountsModule } from "./discounts/discounts.module";
+import { AdsModule } from "./ads/ads.module";
+import { Ads } from "./ads/models/ad.model";
+import { Discounts } from "./discounts/models/discount.model";
+import { Favourite } from "./favorites/models/favorite.model";
+import { Photo } from "./photo/models/photo.model";
+import { Reviews } from "./reviews/models/review.model";
+import { StoreSubscribe } from "./store_subscribe/models/store_subscribe.model";
+import { Address } from "./bot/models/address.model";
+import { Store } from "./store/models/store.model";
 
 @Module({
   imports: [
@@ -38,6 +48,7 @@ import { Bot } from "./bot/models/bot.model";
         token: process.env.BOT_TOKEN!,
         middlewares: [],
         include: [BotModule],
+        options: {},
       }),
     }),
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -58,6 +69,14 @@ import { Bot } from "./bot/models/bot.model";
         SocialLink,
         StoreSocialLink,
         Bot,
+        Address,
+        Ads,
+        Discounts,
+        Favourite,
+        Photo,
+        Reviews,
+        StoreSubscribe,
+        Store,
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -78,6 +97,8 @@ import { Bot } from "./bot/models/bot.model";
     ReviewsModule,
     BotModule,
     StoreModule,
+    DiscountsModule,
+    AdsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

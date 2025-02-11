@@ -24,6 +24,11 @@ export class BotUpdate {
     this.botService.onContact(ctx);
   }
 
+  @On("location")
+  async onLocation(@Ctx() ctx: Context) {
+    await this.botService.onLocation(ctx);
+  }
+
   // @Hears("hi")
   // async onHear(@Ctx() ctx: Context) {
   //   await ctx.replyWithHTML("Salom");
@@ -109,20 +114,10 @@ export class BotUpdate {
   //     );
   // }
 
-  // @On("text")
-  // async onText(@Ctx() ctx: Context) {
-  //   console.log(ctx);
-  //   console.log(ctx.chat);
-  //   console.log(ctx.message);
-
-  //   if ("text" in ctx.message!) {
-  //     if (ctx.message.text === "salom") {
-  //       await ctx.replyWithHTML("<b>Vaaleykum assalom</b>");
-  //     } else {
-  //       await ctx.reply(ctx.message.text); // echo bot
-  //     }
-  //   }
-  // }
+  @On("text")
+  async onText(@Ctx() ctx: Context) {
+    await this.botService.onText(ctx);
+  }
 
   // @On("photo")
   // async onPhoto(@Ctx() ctx: Context) {
@@ -201,10 +196,8 @@ export class BotUpdate {
   //   }
   // }
 
-  // @On("message")
-  // async onMessage(@Ctx() ctx: Context) {
-  //   console.log(ctx.botInfo);
-  //   console.log(ctx.chat);
-  //   console.log(ctx.from);
-  // }
+  @On("message")
+  async onMessage(@Ctx() ctx: Context) {
+    console.log("Unexpected Uncaught message");
+  }
 }

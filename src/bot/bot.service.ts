@@ -4,11 +4,13 @@ import { Bot } from "./models/bot.model";
 import { InjectBot } from "nestjs-telegraf";
 import { BOT_NAME } from "../app.constants";
 import { Context, Markup, Telegraf } from "telegraf";
+import { Address } from "./models/address.model";
 
 @Injectable()
 export class BotService {
   constructor(
     @InjectModel(Bot) private readonly botModel: typeof Bot,
+    @InjectModel(Address) private readonly addressModel: typeof Address,
     @InjectBot(BOT_NAME) private readonly bot: Telegraf<Context>
   ) {}
 
@@ -85,6 +87,86 @@ export class BotService {
           }
         );
       }
+    }
+  }
+
+  async onLocation(ctx: Context) {
+    try {
+      if ("location" in ctx.message!) {
+        if ("text" in ctx.message!) {
+          const user_id = ctx.from!.id;
+          const user = await this.botModel.findByPk(user_id);
+          if (!user || !user.status) {
+            await ctx.reply(`You should first activate your account`, {
+              parse_mode: "HTML",
+              ...Markup.keyboard([["/start"]]).resize(),
+            });
+          } else {
+            const address = await this.addressModel.findOne({
+              where: { user_id },
+              order: [["id", "DESC"]],
+            });
+
+            if (address && address.last_state == "location") {
+              address.location = `${ctx.message.location.latitude},${ctx.message.location.longitude}`;
+              address.last_state = "finish";
+              await address.save();
+              await ctx.reply("Adress has been saved successfully!", {
+                parse_mode: "HTML",
+                ...Markup.keyboard([
+                  ["My locations", "Add a new location"],
+                ]).resize(),
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log("OnLocation error", error);
+    }
+  }
+
+  async onText(ctx: Context) {
+    try {
+      if ("text" in ctx.message!) {
+        const user_id = ctx.from!.id;
+        const user = await this.botModel.findByPk(user_id);
+        if (!user || !user.status) {
+          await ctx.reply(`You should first activate your account`, {
+            parse_mode: "HTML",
+            ...Markup.keyboard([["/start"]]).resize(),
+          });
+        } else {
+          const address = await this.addressModel.findOne({
+            where: { user_id },
+            order: [["id", "DESC"]],
+          });
+
+          if (address && address.last_state != "finish") {
+            if (address.last_state == "name") {
+              address.name = ctx.message.text;
+              address.last_state = "address";
+              await address.save();
+              await ctx.reply(`Enter the address: `, {
+                parse_mode: "HTML",
+                ...Markup.removeKeyboard(),
+              });
+            } else if (address.last_state == "address") {
+              address.address = ctx.message.text;
+              address.last_state = "location";
+              await address.save();
+              await ctx.reply(`Send the location please: `, {
+                parse_mode: "HTML",
+                ...Markup.keyboard([
+                  [Markup.button.locationRequest(`🌐 Send the location`)],
+                ]).resize(),
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log("OnText unexpeced error:", error);
     }
   }
 

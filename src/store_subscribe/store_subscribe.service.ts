@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStoreSubscribeDto } from './dto/create-store_subscribe.dto';
-import { UpdateStoreSubscribeDto } from './dto/update-store_subscribe.dto';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { StoreSubscribe } from "./models/store_subscribe.model";
+import { CreateStoreSubscribeDto } from "./dto/create-store_subscribe.dto";
+import { UpdateStoreSubscribeDto } from "./dto/update-store_subscribe.dto";
+import { User } from "../users/models/user.model";
+import { Store } from "../store/models/store.model";
 
 @Injectable()
 export class StoreSubscribeService {
-  create(createStoreSubscribeDto: CreateStoreSubscribeDto) {
-    return 'This action adds a new storeSubscribe';
+  constructor(
+    @InjectModel(StoreSubscribe)
+    private storeSubscribeModel: typeof StoreSubscribe
+  ) {}
+
+  async create(createStoreSubscribeDto: CreateStoreSubscribeDto) {
+    const newSubscription = await this.storeSubscribeModel.create(
+      createStoreSubscribeDto
+    );
+    return newSubscription;
   }
 
-  findAll() {
-    return `This action returns all storeSubscribe`;
+  async findAll() {
+    const subscriptions = await this.storeSubscribeModel.findAll({
+      include: [User, Store],
+    });
+    if (!subscriptions.length)
+      throw new BadRequestException("No subscriptions found");
+    return subscriptions;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} storeSubscribe`;
+  async findOne(id: number) {
+    const subscription = await this.storeSubscribeModel.findByPk(id, {
+      include: [User, Store],
+    });
+    if (!subscription) throw new BadRequestException("Subscription not found");
+    return subscription;
   }
 
-  update(id: number, updateStoreSubscribeDto: UpdateStoreSubscribeDto) {
-    return `This action updates a #${id} storeSubscribe`;
+  async update(id: number, updateStoreSubscribeDto: UpdateStoreSubscribeDto) {
+    const subscription = await this.storeSubscribeModel.findByPk(id);
+    if (!subscription) throw new BadRequestException("Subscription not found");
+    return await subscription.update(updateStoreSubscribeDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} storeSubscribe`;
+  async remove(id: number) {
+    const subscription = await this.storeSubscribeModel.findByPk(id);
+    if (!subscription) throw new BadRequestException("Subscription not found");
+    await subscription.destroy();
+    return { message: "Subscription has been removed successfully" };
   }
 }

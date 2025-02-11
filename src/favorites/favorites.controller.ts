@@ -1,14 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { FavouritesService } from "./favorites.service";
+import { CreateFavouriteDto } from "./dto/create-favorite.dto";
+import { UpdateFavouriteDto } from "./dto/update-favorite.dto";
 
-@Controller('favorites')
+@Controller("favorites")
 export class FavoritesController {
-  constructor(private readonly favoritesService: FavoritesService) {}
+  constructor(private readonly favoritesService: FavouritesService) {}
 
   @Post()
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
+  create(@Body() createFavoriteDto: CreateFavouriteDto) {
     return this.favoritesService.create(createFavoriteDto);
   }
 
@@ -17,18 +25,21 @@ export class FavoritesController {
     return this.favoritesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.favoritesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavoriteDto: UpdateFavoriteDto) {
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updateFavoriteDto: UpdateFavouriteDto
+  ) {
     return this.favoritesService.update(+id, updateFavoriteDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.favoritesService.remove(+id);
   }
 }

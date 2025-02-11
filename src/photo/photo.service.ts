@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePhotoDto } from './dto/create-photo.dto';
-import { UpdatePhotoDto } from './dto/update-photo.dto';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { Photo } from "./models/photo.model";
+import { CreatePhotoDto } from "./dto/create-photo.dto";
+import { UpdatePhotoDto } from "./dto/update-photo.dto";
+import { Discounts } from "../discounts/models/discount.model";
 
 @Injectable()
 export class PhotoService {
-  create(createPhotoDto: CreatePhotoDto) {
-    return 'This action adds a new photo';
+  constructor(@InjectModel(Photo) private photoModel: typeof Photo) {}
+
+  async create(createPhotoDto: CreatePhotoDto) {
+    const newPhoto = await this.photoModel.create(createPhotoDto);
+    return newPhoto;
   }
 
-  findAll() {
-    return `This action returns all photo`;
+  async findAll() {
+    const photos = await this.photoModel.findAll({
+      include: [Discounts],
+    });
+    if (!photos.length) throw new BadRequestException("No photos found");
+    return photos;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} photo`;
+  async findOne(id: number) {
+    const photo = await this.photoModel.findByPk(id, {
+      include: [Discounts],
+    });
+    if (!photo) throw new BadRequestException("Photo not found");
+    return photo;
   }
 
-  update(id: number, updatePhotoDto: UpdatePhotoDto) {
-    return `This action updates a #${id} photo`;
+  async update(id: number, updatePhotoDto: UpdatePhotoDto) {
+    const photo = await this.photoModel.findByPk(id);
+    if (!photo) throw new BadRequestException("Photo not found");
+    return await photo.update(updatePhotoDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} photo`;
+  async remove(id: number) {
+    const photo = await this.photoModel.findByPk(id);
+    if (!photo) throw new BadRequestException("Photo not found");
+    await photo.destroy();
+    return { message: "Photo has been removed successfully" };
   }
 }

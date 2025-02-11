@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { Favourite } from "./models/favorite.model";
+import { CreateFavouriteDto } from "./dto/create-favorite.dto";
+import { UpdateFavouriteDto } from "./dto/update-favorite.dto";
+import { User } from "../users/models/user.model";
+import { Discounts } from "../discounts/models/discount.model";
 
 @Injectable()
-export class FavoritesService {
-  create(createFavoriteDto: CreateFavoriteDto) {
-    return 'This action adds a new favorite';
+export class FavouritesService {
+  constructor(
+    @InjectModel(Favourite) private favouriteModel: typeof Favourite
+  ) {}
+
+  async create(createFavouriteDto: CreateFavouriteDto) {
+    const newFavourite = await this.favouriteModel.create(createFavouriteDto);
+    return newFavourite;
   }
 
-  findAll() {
-    return `This action returns all favorites`;
+  async findAll() {
+    const favourites = await this.favouriteModel.findAll({
+      include: [User, Discounts],
+    });
+    if (!favourites.length)
+      throw new BadRequestException("No favourites found");
+    return favourites;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favorite`;
+  async findOne(id: number) {
+    const favourite = await this.favouriteModel.findByPk(id, {
+      include: [User, Discounts],
+    });
+    if (!favourite) throw new BadRequestException("Favourite not found");
+    return favourite;
   }
 
-  update(id: number, updateFavoriteDto: UpdateFavoriteDto) {
-    return `This action updates a #${id} favorite`;
+  async update(id: number, updateFavouriteDto: UpdateFavouriteDto) {
+    const favourite = await this.favouriteModel.findByPk(id);
+    if (!favourite) throw new BadRequestException("Favourite not found");
+    return await favourite.update(updateFavouriteDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} favorite`;
+  async remove(id: number) {
+    const favourite = await this.favouriteModel.findByPk(id);
+    if (!favourite) throw new BadRequestException("Favourite not found");
+    await favourite.destroy();
+    return { message: "Favourite has been removed successfully" };
   }
 }

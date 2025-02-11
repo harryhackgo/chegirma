@@ -1,1 +1,4 @@
-export class CreateStoreSubscribeDto {}
+export class CreateStoreSubscribeDto {
+  userId: number;
+  storeId: number;
+}

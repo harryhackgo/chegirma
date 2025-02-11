@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
-import { FavoritesController } from './favorites.controller';
+import { Module } from "@nestjs/common";
+import { FavouritesService } from "./favorites.service";
+import { FavoritesController } from "./favorites.controller";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { Favourite } from "./models/favorite.model";
 
 @Module({
+  imports: [SequelizeModule.forFeature([Favourite])],
   controllers: [FavoritesController],
-  providers: [FavoritesService],
+  providers: [FavouritesService],
 })
 export class FavoritesModule {}
