@@ -15,6 +15,8 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserGuard } from "../guards/user.guard";
 import { FindUserDto } from "./dto/find-user.dto";
 import { UserSelfGuard } from "../guards/user-self.guard";
+import { PhoneDto } from "./dto/phone-user.dto";
+import { VerifyOtpDto } from "./dto/verify-otp.dto";
 
 @Controller("users")
 export class UsersController {
@@ -59,5 +61,17 @@ export class UsersController {
   @Post("find-user")
   findUser(@Body() findUserDto: FindUserDto) {
     return this.usersService.findUser(findUserDto);
+  }
+
+  @HttpCode(200)
+  @Post("newotp")
+  newotp(@Body() phoneDto: PhoneDto) {
+    return this.usersService.newOtp(phoneDto);
+  }
+
+  @HttpCode(200)
+  @Post("verify")
+  verifyotp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.usersService.verifyOtp(verifyOtpDto);
   }
 }

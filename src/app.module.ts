@@ -39,7 +39,10 @@ import { Reviews } from "./reviews/models/review.model";
 import { StoreSubscribe } from "./store_subscribe/models/store_subscribe.model";
 import { Address } from "./bot/models/address.model";
 import { Store } from "./store/models/store.model";
-
+import { OtpModule } from "./otp/otp.module";
+import { Otp } from "./otp/models/otp.model";
+import { SmsModule } from "./sms/sms.module";
+import { Car } from "./bot/models/car.model";
 @Module({
   imports: [
     TelegrafModule.forRootAsync({
@@ -77,6 +80,8 @@ import { Store } from "./store/models/store.model";
         Reviews,
         StoreSubscribe,
         Store,
+        Otp,
+        Car,
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -99,6 +104,8 @@ import { Store } from "./store/models/store.model";
     StoreModule,
     DiscountsModule,
     AdsModule,
+    OtpModule,
+    SmsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

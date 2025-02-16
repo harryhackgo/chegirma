@@ -6,15 +6,29 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { TelegrafException, TelegrafExecutionContext } from "nestjs-telegraf";
 import { Observable } from "rxjs";
+import { Context } from "telegraf";
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  private readonly ADMIN: string;
+  constructor(private readonly jwtService: JwtService) {
+    this.ADMIN = process.env.ADMIN!;
+  }
 
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
+    const ctx = TelegrafExecutionContext.create(context);
+    const { from } = ctx.getContext<Context>();
+    console.log(from!.id);
+    if (Number(this.ADMIN) != from!.id) {
+      throw new TelegrafException("You are not an admin. Forbidden");
+    }
+
+    return true;
+
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
 

@@ -6,10 +6,20 @@ import { Bot } from "./models/bot.model";
 import { AddressService } from "./address.service";
 import { Address } from "./models/address.model";
 import { AddressUpdate } from "./address.update";
+import { CarUpdate } from "./car.update";
+import { CarService } from "./car.service";
+import { Car } from "./models/car.model";
 
 @Module({
-  imports: [SequelizeModule.forFeature([Bot, Address])],
-  providers: [BotService, BotUpdate, AddressService, AddressUpdate],
+  imports: [SequelizeModule.forFeature([Bot, Address, Car])],
+  providers: [
+    CarUpdate,
+    CarService,
+    AddressUpdate,
+    AddressService,
+    BotService,
+    BotUpdate,
+  ],
   exports: [BotService],
 })
 export class BotModule {}

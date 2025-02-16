@@ -9,6 +9,8 @@ import {
 } from "nestjs-telegraf";
 import { Context, Markup } from "telegraf";
 import { BotService } from "./bot.service";
+import { UseFilters, UseGuards } from "@nestjs/common";
+import { AdminGuard } from "../guards/admin.guard";
 
 @Update()
 export class BotUpdate {
@@ -27,6 +29,13 @@ export class BotUpdate {
   @On("location")
   async onLocation(@Ctx() ctx: Context) {
     await this.botService.onLocation(ctx);
+  }
+
+  // @UseFilters(TelegrafExcecutionFilter)
+  @UseGuards(AdminGuard)
+  @Command("admin")
+  async onAdminCommand(@Ctx() ctx: Context) {
+    await this.botService.admin_menu(ctx, "Welcome back Admin");
   }
 
   // @Hears("hi")
@@ -198,6 +207,6 @@ export class BotUpdate {
 
   @On("message")
   async onMessage(@Ctx() ctx: Context) {
-    console.log("Unexpected Uncaught message");
+    await this.botService.deleteUncaughtMessage(ctx);
   }
 }

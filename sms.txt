@@ -1,0 +1,9 @@
+
+
+{
+    "message": "token_generated",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDIwMzI2NjcsImlhdCI6MTczOTQ0MDY2Nywicm9sZSI6InRlc3QiLCJzaWduIjoiMDU0YmY1NDBlNWI0NjczYWFlNjg4ZTg1ZmE4MWYxODExODg5OTExM2NiMTI5Y2JjMzc0OTk2ZTdlYTc4ZjhmNCIsInN1YiI6Ijk4NjQifQ.CY029fw_Qv1oDv10gBjYYEcMm_hSdtOy3FbLSRx5F-Q"
+    },
+    "token_type": "bearer"
+}

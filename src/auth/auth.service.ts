@@ -39,7 +39,6 @@ export class AuthService {
 
   async signIn(user: SignUpUserDto, res: Response) {
     const foundUser = await this.usersService.findUserByEmail(user.email);
-
     if (!foundUser) {
       throw new BadRequestException("Email or password is wrong");
     }

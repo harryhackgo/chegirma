@@ -1,7 +1,8 @@
-import { Action, Command, Ctx, Hears } from "nestjs-telegraf";
+import { Action, Command, Ctx, Hears, Update } from "nestjs-telegraf";
 import { Context } from "telegraf";
 import { AddressService } from "./address.service";
 
+@Update()
 export class AddressUpdate {
   constructor(private readonly addressService: AddressService) {}
 
@@ -20,12 +21,12 @@ export class AddressUpdate {
     await this.addressService.onCommandMyLocations(ctx);
   }
 
-  @Action(/$loc_+\d+/)
+  @Action(/^loc_\d+$/)
   async onClickLocation(@Ctx() ctx: Context) {
     await this.addressService.onClickLocation(ctx);
   }
 
-  @Action(/$del_+\d+/)
+  @Action(/^del_\d+$/)
   async onDelLocation(@Ctx() ctx: Context) {
     await this.addressService.onDelLocation(ctx);
   }
